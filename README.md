@@ -4,6 +4,18 @@
 
 Atingir nível avançado em C aplicado a programação de sistemas, arquitetura de computadores, concorrência, sistemas operacionais, leitura de kernels didáticos como xv6 e entrada prática em OSDev.
 
+## Como usar este roadmap
+
+Os links para manuais e documentações completas não significam que você precisa ler tudo antes de avançar. Eles entram como referência confiável para consulta. Para cada etapa, foque primeiro no bloco "Por onde começar". Quando um exercício exigir mais detalhes, use os materiais oficiais para aprofundar exatamente naquele ponto.
+
+A regra prática é:
+
+1. Aprenda o mínimo necessário para construir algo pequeno.
+2. Implemente um exercício real.
+3. Depure os erros.
+4. Volte à documentação para entender o comportamento específico que apareceu.
+5. Só então aprofunde.
+
 ---
 
 ## 1. Ambiente de Desenvolvimento
@@ -21,6 +33,27 @@ Atingir nível avançado em C aplicado a programação de sistemas, arquitetura 
 - Git
 - QEMU
 - WSL, máquina virtual ou Linux nativo
+
+### Por onde começar
+
+Comece montando um ambiente que consiga compilar, executar, depurar e inspecionar programas C pequenos. Não leia o manual inteiro do Make, GDB ou man-pages nesta fase.
+
+O mínimo necessário para avançar:
+
+- Conseguir compilar um arquivo com `cc main.c -o main`.
+- Usar flags básicas: `-Wall`, `-Wextra`, `-Wpedantic`, `-g`.
+- Criar um `Makefile` com alvos `build`, `run`, `clean` e `debug`.
+- Saber iniciar o GDB com `gdb ./programa`.
+- Usar no GDB: `run`, `break`, `next`, `step`, `print`, `backtrace`, `continue`, `quit`.
+- Consultar páginas específicas com `man 2 open`, `man 3 malloc`, `man 3 printf`.
+- Rodar `valgrind` ou sanitizers para encontrar erros de memória.
+- Usar `strace ./programa` para ver syscalls.
+
+Aprofunde depois em:
+
+- Makefiles com dependências automáticas.
+- GDB avançado: watchpoints, inspeção de memória e debugging de processos com `fork`.
+- `perf`, `ltrace`, profiling e análise de performance.
 
 ### Materiais
 
@@ -85,6 +118,27 @@ strace -f ./app
 - Pré-processador
 - Compilação separada
 
+### Por onde começar
+
+Comece pelo C necessário para escrever programas corretos em múltiplos arquivos. O objetivo aqui ainda não é conhecer todas as regras da linguagem, mas conseguir escrever código claro, compilar com warnings fortes e não perder controle da memória.
+
+O mínimo necessário para avançar:
+
+- Entender ponteiros como endereços para objetos com tamanho e tempo de vida.
+- Saber a diferença entre array, ponteiro e string terminada em `\0`.
+- Criar e usar `struct`.
+- Usar `malloc` e `free` com uma regra clara de ownership.
+- Separar interface em `.h` e implementação em `.c`.
+- Saber quando uma função deve retornar erro e como usar `errno`.
+- Ler e escrever arquivos com `fopen`, `fgets`, `fprintf`, `fclose`.
+- Compilar múltiplos arquivos: `cc main.c vetor.c -o app`.
+
+Aprofunde depois em:
+
+- Regras finas de linkage, `static`, `extern` e tradução separada.
+- Pré-processador além de include guards.
+- APIs mais robustas com contratos explícitos de ownership.
+
 ### Materiais
 
 - [Beej's Guide to C Programming](https://beej.us/guide/bgc/)
@@ -124,6 +178,29 @@ Sistemas operacionais exigem controle explícito de memória, layouts de dados p
 - Compilação, linkedição e símbolos
 - ABI e convenções de chamada
 - Otimização e inspeção de assembly
+
+### Por onde começar
+
+Comece pelos pontos que mais quebram programas reais: undefined behavior, layout de memória e otimização do compilador. Não tente decorar o padrão C inteiro. Use exemplos pequenos e observe o que muda quando você troca flags de compilação.
+
+O mínimo necessário para avançar:
+
+- Saber que overflow de inteiro assinado é undefined behavior.
+- Entender que acessar memória fora de um array é erro mesmo quando "parece funcionar".
+- Saber que `sizeof`, alignment e padding afetam o layout de structs.
+- Entender por que `memcpy` é diferente de atribuir ponteiros.
+- Usar `-fsanitize=address,undefined`.
+- Comparar assembly simples no Compiler Explorer.
+- Saber o papel de `volatile` sem usá-lo como solução genérica para concorrência.
+- Entender ponteiros para função o bastante para criar uma tabela de operações.
+
+Aprofunde depois em:
+
+- Strict aliasing.
+- ABI e calling convention.
+- Modelo de memória de C.
+- Otimização guiada por profiling.
+- Macros genéricas e estruturas intrusivas no estilo kernel.
 
 ### Materiais
 
@@ -168,6 +245,27 @@ Código de baixo nível frequentemente depende de detalhes que não aparecem em 
 - Iteradores manuais
 - Estratégias de ownership
 
+### Por onde começar
+
+Comece implementando poucas estruturas, mas com testes e desalocação correta. O objetivo não é colecionar estruturas, e sim aprender invariantes, ownership e custo de operações.
+
+O mínimo necessário para avançar:
+
+- Vetor dinâmico com `push`, `pop`, `get`, `free`.
+- Lista ligada simples com inserção, busca, remoção e destruição.
+- Hash table simples usando strings como chave.
+- Ring buffer com capacidade fixa.
+- Testes que verifiquem casos vazios, um elemento, muitos elementos e remoção.
+- Rodar tudo com AddressSanitizer ou Valgrind.
+
+Aprofunde depois em:
+
+- Hash table com open addressing e resizing.
+- Listas intrusivas.
+- Heap binário.
+- Allocators customizados.
+- Estruturas pensadas para cache.
+
 ### Materiais
 
 - [Ben Hoyt - How to implement a hash table in C](https://benhoyt.com/writings/hash-table-in-c/)
@@ -208,6 +306,30 @@ O kernel e a programação de sistemas usam estruturas de dados com restrições
 - `select`, `poll`, `epoll`
 - Daemons
 - IPC
+
+### Por onde começar
+
+Comece tratando o Linux como uma API de kernel acessada por funções C. Você não precisa ler TLPI inteiro. Use man-pages por syscall conforme aparecerem nos exercícios.
+
+O mínimo necessário para avançar:
+
+- Entender descritor de arquivo como um inteiro que referencia um recurso aberto.
+- Usar `open`, `read`, `write`, `close`.
+- Consultar `man 2 open`, `man 2 read`, `man 2 write`, `man 2 close`.
+- Criar processos com `fork`.
+- Substituir processo com `execvp`.
+- Esperar filhos com `waitpid`.
+- Redirecionar entrada/saída com `dup2`.
+- Criar pipe com `pipe`.
+- Tratar erros checando retorno e usando `perror` ou `strerror(errno)`.
+
+Aprofunde depois em:
+
+- Sinais.
+- `mmap`.
+- Sockets.
+- `select`, `poll` e `epoll`.
+- Daemons e IPC mais avançado.
 
 ### Materiais
 
@@ -255,6 +377,28 @@ Sistemas operacionais são acessados por programas de usuário através de chama
 - Interrupções e exceções
 - User mode e kernel mode
 
+### Por onde começar
+
+Comece pela arquitetura vista do ponto de vista de um programa C: como valores são representados, onde variáveis vivem, como chamadas de função usam stack e como a CPU acessa memória.
+
+O mínimo necessário para avançar:
+
+- Representar inteiros em binário e hexadecimal.
+- Entender complemento de dois.
+- Entender stack frame em uma chamada de função simples.
+- Saber diferenciar stack, heap, dados globais e código.
+- Ler assembly básico gerado por C: `mov`, `add`, `sub`, `call`, `ret`, `cmp`, jumps.
+- Entender cache como motivo para preferir acesso sequencial à memória.
+- Entender a ideia de memória virtual antes de estudar page tables em detalhes.
+
+Aprofunde depois em:
+
+- Calling convention completa.
+- Pipeline e predição de desvios.
+- TLB.
+- Page tables reais.
+- Traps, interrupções e transição user/kernel.
+
 ### Materiais
 
 - [CS:APP Official Site](https://csapp.cs.cmu.edu/3e/home.html)
@@ -297,6 +441,29 @@ Um sistema operacional é a camada que coordena hardware e software. Sem entende
 - Produtor-consumidor
 - Estruturas thread-safe
 - Debugging com ThreadSanitizer
+
+### Por onde começar
+
+Comece com pthreads e problemas pequenos onde o bug seja visível. Concorrência deve ser estudada com experimentos, porque muitos erros parecem corretos em execuções ocasionais.
+
+O mínimo necessário para avançar:
+
+- Criar threads com `pthread_create`.
+- Esperar threads com `pthread_join`.
+- Proteger estado compartilhado com `pthread_mutex_t`.
+- Usar `pthread_cond_t` para produtor-consumidor.
+- Entender race condition.
+- Entender deadlock por ordem inconsistente de locks.
+- Rodar exemplos com ThreadSanitizer.
+- Saber que `volatile` não torna código thread-safe.
+
+Aprofunde depois em:
+
+- Atomics em C.
+- Modelo de memória.
+- False sharing.
+- Lock-free básico.
+- Thread pools e filas concorrentes.
 
 ### Materiais
 
@@ -345,6 +512,29 @@ Concorrência é central em sistemas operacionais: escalonadores, locks de kerne
 - IPC
 - Segurança e isolamento
 
+### Por onde começar
+
+Comece por mecanismos que conectam diretamente com programas que você já escreveu: processos, syscalls, escalonamento e memória virtual. Use OSTEP como leitura principal, capítulo por capítulo, acompanhada de simulações pequenas em C.
+
+O mínimo necessário para avançar:
+
+- Entender o que é processo.
+- Entender diferença entre processo e thread.
+- Entender o que é uma syscall e por que ela muda para modo kernel.
+- Simular escalonamento round-robin.
+- Entender endereço virtual versus endereço físico.
+- Simular substituição de páginas com FIFO e LRU.
+- Entender sistema de arquivos como mapeamento entre nomes, metadados e blocos.
+
+Aprofunde depois em:
+
+- Copy-on-write.
+- Page faults.
+- Journaling.
+- Buffer cache.
+- Drivers.
+- Segurança, isolamento e permissões.
+
 ### Materiais
 
 - [OSTEP - Operating Systems: Three Easy Pieces](https://pages.cs.wisc.edu/~remzi/OSTEP/)
@@ -386,6 +576,28 @@ Aqui você começa a ligar a API de usuário ao funcionamento interno do kernel.
 - Locks
 - Drivers simples
 - Labs do MIT 6.S081/6.1810
+
+### Por onde começar
+
+Comece lendo xv6 por fluxos concretos, não de forma linear arquivo por arquivo. O primeiro objetivo é conseguir compilar, rodar, adicionar uma syscall simples e seguir o caminho dela do usuário até o kernel.
+
+O mínimo necessário para avançar:
+
+- Compilar e rodar xv6 no QEMU.
+- Entender a estrutura básica: `user/`, `kernel/`, `Makefile`.
+- Seguir uma syscall existente, como `getpid`.
+- Adicionar uma syscall simples.
+- Entender `proc`, `trap`, `syscall`, `kalloc` e `vm` em nível inicial.
+- Ler o capítulo do xv6 book correspondente ao código que está alterando.
+
+Aprofunde depois em:
+
+- Scheduler.
+- Page tables.
+- Lazy allocation.
+- Copy-on-write.
+- File system.
+- Locks e buffer cache.
 
 ### Materiais
 
@@ -439,6 +651,30 @@ xv6 é pequeno o suficiente para ser lido por uma pessoa, mas real o suficiente 
 - ELF loading
 - User mode
 - Filesystem simples
+
+### Por onde começar
+
+Comece com o menor kernel possível e evite tentar implementar tudo de uma vez. Em OSDev, o primeiro marco real é inicializar no QEMU e conseguir imprimir logs pela serial.
+
+O mínimo necessário para avançar:
+
+- Entender a diferença entre hosted C e freestanding C.
+- Configurar um cross compiler ou usar uma toolchain adequada.
+- Usar um bootloader como Limine ou GRUB.
+- Criar um linker script mínimo.
+- Gerar uma imagem bootável.
+- Rodar no QEMU.
+- Escrever saída pela serial.
+- Ter uma função de panic simples para parar o kernel com mensagem.
+
+Aprofunde depois em:
+
+- GDT e IDT.
+- Interrupções.
+- Paging.
+- Physical memory manager.
+- Kernel heap.
+- Timer, teclado, syscalls e modo usuário.
 
 ### Materiais
 
